@@ -16,7 +16,7 @@ class App:
         self.fps = 60
         self.window_width = 1200
         self.window_height = 800
-        self.scroll_speed = 1
+        self.scroll_speed = 2
         self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.RESIZABLE)
         self.game = Game(self.screen, self.set_size, self.k)
 

@@ -1,3 +1,5 @@
+import math
+
 import pygame
 
 from game.player import Player
@@ -48,6 +50,8 @@ class Game:
         self.first_line_node_x = None
         self.last_line_node_x = None
         self.first_node_y = None
+        self.min_node_y = None
+        self.max_node_y = None
         self.width, self.height = None, None
         self.player1_box1_x = None
         self.player1_box1_y = None
@@ -143,9 +147,13 @@ class Game:
 
     def scroll_up(self, amount):
         self.first_node_y -= int(amount)
+        if self.first_node_y < self.min_node_y:
+            self.first_node_y = self.min_node_y
 
     def scroll_down(self, amount):
         self.first_node_y += int(amount)
+        if self.first_node_y > self.max_node_y:
+            self.first_node_y = self.max_node_y
 
     def reset(self, set_size, k):
         self.finished = False
@@ -167,6 +175,10 @@ class Game:
         self.last_line_node_x = self.player1_box1_x + self.player_box_width + self.player_box_margin + last_line_margin // 2
         self.nodes_in_line = nodes_in_line
         self.first_node_y = self.player1_box1_y
+        self.max_node_y = self.first_node_y
+        self.min_node_y = min(self.max_node_y + self.height - math.ceil(self.set_size / nodes_in_line) *
+                              (self.node_radius * 2 + self.node_margin) - 100,
+                              self.max_node_y)
 
     def set_elements_positions(self):
         self.width, self.height = self.screen.get_size()
