@@ -142,10 +142,10 @@ class Game:
             self.bot_timer -= self.bot_move_wait_time
 
     def scroll_up(self, amount):
-        self.first_node_y -= amount
+        self.first_node_y -= int(amount)
 
     def scroll_down(self, amount):
-        self.first_node_y += amount
+        self.first_node_y += int(amount)
 
     def reset(self, set_size, k):
         self.finished = False
