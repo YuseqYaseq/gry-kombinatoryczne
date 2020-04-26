@@ -31,9 +31,9 @@ class App:
                     pygame.quit()
                     return 0
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 4:
+                    if event.button == 5:
                         self.game.scroll_up(ms_elapsed * self.scroll_speed)
-                    elif event.button == 5:
+                    elif event.button == 4:
                         self.game.scroll_down(ms_elapsed * self.scroll_speed)
                 elif event.type == pygame.VIDEORESIZE:
                     self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
