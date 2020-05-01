@@ -1,6 +1,7 @@
 from unit_tests.common import expect, is_none, is_arithmetic_sequnce
 from game.sequence import Sequence
 
+
 def search_with_startidx_equals_zero():
     sequence = Sequence([2, 4, 6, 7, 11], 3)
 
@@ -25,6 +26,7 @@ def search_with_startidx_equals_zero():
     res = sequence.search(11, 0)
     expect(4, res)
 
+
 def search_startidx_tests():
     sequence = Sequence([2, 4, 6, 7, 11], 3)
 
@@ -40,6 +42,7 @@ def search_startidx_tests():
     res = sequence.search(7, 4)
     expect(-1, res)
 
+
 def find_arithmethic_sequence_for_k_grather_than_n():
     seq = Sequence([1], 2)
     res = seq.find_arithmethic_sequence()
@@ -53,6 +56,7 @@ def find_arithmethic_sequence_for_k_grather_than_n():
     res = seq.find_arithmethic_sequence()
     is_none(res)
 
+
 def find_arithmethic_sequence_for_k_equals_two():
     seq = Sequence([1], 2)
     res = seq.find_arithmethic_sequence()
@@ -65,6 +69,7 @@ def find_arithmethic_sequence_for_k_equals_two():
     seq = Sequence([1, 2, 3], 2)
     res = seq.find_arithmethic_sequence()
     is_arithmetic_sequnce(res, 1, 1)
+
 
 def find_arithmethic_sequence_tests():
     seq = Sequence([1, 2, 3], 3)
@@ -87,6 +92,7 @@ def find_arithmethic_sequence_tests():
     res = seq.find_arithmethic_sequence()
     is_arithmetic_sequnce(res, 1, 3)
 
+
 def is_term_tests():
     seq = Sequence([1, 2, 4], 3)
     res = seq.is_term()
@@ -95,6 +101,7 @@ def is_term_tests():
     seq = Sequence([1, 2, 3], 3)
     res = seq.is_term()
     expect(True, res)
+
 
 def sequence_tests():
     search_with_startidx_equals_zero()
@@ -105,5 +112,3 @@ def sequence_tests():
     find_arithmethic_sequence_tests()
 
     is_term_tests()
-
-    

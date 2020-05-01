@@ -50,7 +50,7 @@ class Sequence:
                 while itr < self.k:
                     itr = itr + 1
                     an = an + r
-                    lastIdx = self.search(an, lastIdx)
+                    lastIdx = self.search(an, lastIdx + 1)
                     if lastIdx == -1:
                         break
                 
@@ -58,3 +58,5 @@ class Sequence:
                     return (a1, r)
         return None
     
+    def evaluate(self):
+        return 0
