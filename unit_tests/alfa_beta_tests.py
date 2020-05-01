@@ -139,9 +139,62 @@ def evaluate_node_tests():
     expect(6, res)
 
 
+def first_player_chooses_a_winning_move():
+    ab = AlfaBeta([1, 2, 3, 4, 5], [2, 0, 1, 1, 2], 3, 1, 2)
+    res = ab.get_move()
+    expect(1, res)
+
+    ab = AlfaBeta([1, 2, 3, 4, 5], [0, 0, 1, 1, 2], 3, 1, 2)
+    res = ab.get_move()
+    expect(1, res)
+
+
+def second_player_chooses_a_winning_move():
+    ab = AlfaBeta([1, 2, 3, 4, 5], [1, 0, 2, 2, 1], 3, 2, 1)
+    res = ab.get_move()
+    expect(1, res)
+
+    ab = AlfaBeta([1, 2, 3, 4, 5], [0, 0, 2, 2, 1], 3, 2, 1)
+    res = ab.get_move()
+    expect(1, res)
+
+
+def first_player_chooses_move_to_win():
+    ab = AlfaBeta([1, 2, 3, 4, 5, 6, 7], [2, 2, 1, 0, 0, 0, 1], 3, 1, 2)
+    res = ab.get_move()
+    expect(4, res)
+
+
+def second_player_chooses_move_to_win():
+    ab = AlfaBeta([1, 2, 3, 4, 5, 6, 7], [1, 1, 2, 0, 0, 0, 2], 3, 2, 1)
+    res = ab.get_move()
+    expect(4, res)
+
+
+def first_player_blocks_a_winning_move_of_second_player():
+    ab = AlfaBeta([1, 2, 3, 4, 5, 6], [0, 0, 0, 2, 2, 1], 3, 1, 2)
+    res = ab.get_move()
+    expect(2, res)
+
+
+def second_player_blocks_a_winning_move_of_first_player():
+    ab = AlfaBeta([1, 2, 3, 4, 5, 6], [0, 0, 0, 1, 1, 2], 3, 2, 1)
+    res = ab.get_move()
+    expect(2, res)
+
+
 def alfa_beta_tests():
     create_terminal_sequence_tests()
     create_evalute_sequence_tests()
 
     calculate_terminal_node_value_tests()
     evaluate_node_tests()
+
+    first_player_chooses_a_winning_move()
+    second_player_chooses_a_winning_move()
+
+    first_player_chooses_move_to_win()
+    second_player_chooses_move_to_win()
+
+    first_player_blocks_a_winning_move_of_second_player()
+    second_player_blocks_a_winning_move_of_first_player()
