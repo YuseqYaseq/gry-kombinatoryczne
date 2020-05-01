@@ -43,7 +43,7 @@ def search_startidx_tests():
     expect(-1, res)
 
 
-def find_arithmethic_sequence_for_k_grather_than_n():
+def find_arithmethic_sequence_for_k_greater_than_n():
     seq = Sequence([1], 2)
     res = seq.find_arithmethic_sequence()
     is_none(res)
@@ -103,12 +103,90 @@ def is_term_tests():
     expect(True, res)
 
 
+def can_reach_last_element_of_arithmetic_sequence_tests():
+    seq = Sequence([1, 2, 4], 3)
+    res = seq.can_reach_last_element_of_arithmetic_sequence(1, 1)
+    expect(True, res)
+
+    seq = Sequence([1, 3, 4], 3)
+    res = seq.can_reach_last_element_of_arithmetic_sequence(1, 2)
+    expect(False, res)
+
+    seq = Sequence([1, 3, 5], 3)
+    res = seq.can_reach_last_element_of_arithmetic_sequence(1, 2)
+    expect(True, res)
+
+
+def contains_arithmetic_sequence_tests():
+    seq = Sequence([1, 3, 5], 3)
+    res = seq.contains_arithmetic_sequence(3, 2, 1)
+    expect(True, res)
+
+    seq = Sequence([1, 3, 5, 6], 3)
+    res = seq.contains_arithmetic_sequence(3, 2, 2)
+    expect(False, res)
+
+
+def evaluate_for_k_greater_than_n():
+    seq = Sequence([1], 2)
+    res = seq.evaluate()
+    expect(0, res)
+
+    seq = Sequence([1, 2], 3)
+    res = seq.evaluate()
+    expect(0, res)
+
+
+def evaluate_for_k_equals_two():
+    seq = Sequence([1, 2], 2)
+    res = seq.evaluate()
+    expect(1, res)
+
+    seq = Sequence([1, 2, 3], 2)
+    res = seq.evaluate()
+    expect(3, res)
+
+    seq = Sequence([1, 2, 4, 7], 2)
+    res = seq.evaluate()
+    expect(6, res)
+
+    seq = Sequence([1, 2, 4, 7, 11], 2)
+    res = seq.evaluate()
+    expect(10, res)
+
+
+def evaluate_tests():
+    seq = Sequence([1, 2, 3], 3)
+    res = seq.evaluate()
+    expect(1, res)
+
+    seq = Sequence([1, 2, 4], 3)
+    res = seq.evaluate()
+    expect(0, res)
+
+    seq = Sequence([1, 2, 4, 5, 6], 3)
+    res = seq.evaluate()
+    expect(2, res)
+
+    seq = Sequence([1, 2, 3, 4, 5], 3)
+    res = seq.evaluate()
+    expect(4, res)
+
+
 def sequence_tests():
     search_with_startidx_equals_zero()
     search_startidx_tests()
 
-    find_arithmethic_sequence_for_k_grather_than_n()
+    find_arithmethic_sequence_for_k_greater_than_n()
     find_arithmethic_sequence_for_k_equals_two()
     find_arithmethic_sequence_tests()
 
     is_term_tests()
+
+    can_reach_last_element_of_arithmetic_sequence_tests()
+
+    contains_arithmetic_sequence_tests()
+
+    evaluate_for_k_greater_than_n()
+    evaluate_for_k_equals_two()
+    evaluate_tests()
