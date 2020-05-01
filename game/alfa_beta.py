@@ -10,9 +10,27 @@ class AlfaBeta:
         self.k = k
         self.player = player
         self.enemy = enemy
+        self.max_deepth = k
 
-    def run(self):
-        return self.alfa_beta(self.k, float('-inf'), float('inf'), self.player)
+    def get_move(self):
+        alfa = float('-inf')
+        beta = float('inf')
+        move = None
+
+        for i in range(0, len(self.state)):
+            if self.state[i] == 0:
+                self.state[i] = self.player
+
+                child_alfa = self.alfa_beta(self.max_deepth - 1, alfa, beta, self.enemy)
+                if alfa < child_alfa:
+                    alfa = child_alfa
+                    move = i
+
+                self.state[i] = 0
+
+                if alfa >= beta:
+                    break
+        return move
 
     def alfa_beta(self, deepth, alfa, beta, current_player):
         terminal_value = self.calculate_terminal_node_value(current_player)
