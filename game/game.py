@@ -10,8 +10,8 @@ class Game:
     def __init__(self, screen, set_size, k):
 
         # Game stuff
-        self.player1 = Player()
-        self.player2 = Player()
+        self.player1 = Player(1, 2, k, 3)
+        self.player2 = Player(2, 1, k, 3)
         self.bot_move_wait_time = 1_000  # 1 second between every bot move
         self.bot_timer = 0.0
         self.current_player_turn = 1  # 1 or 2

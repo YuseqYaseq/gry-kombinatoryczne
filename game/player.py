@@ -1,11 +1,23 @@
 from random import randint
 from typing import List
-
+from game.alfa_beta import AlfaBeta
 
 class Player:
 
+    def __init__(self, player, enemy, k, max_deepth):
+        self.player = player
+        self.enemy = enemy
+        self.k = k
+        self.max_deepth = max_deepth
+        
     def get_move(self, nodes: List):
-        ret = randint(0, len(nodes)-1)
-        while nodes[ret] != 0:
-            ret = randint(0, len(nodes)-1)
-        return ret
+        values = list(range(0, len(nodes))) #TODO
+
+        alfa_beta = AlfaBeta(values, nodes, self.k, self.player, self.enemy, self.max_deepth)
+
+        return alfa_beta.get_move()
+    # def get_move(self, nodes: List):
+        # ret = randint(0, len(nodes)-1)
+        # while nodes[ret] != 0:
+        #     ret = randint(0, len(nodes)-1)
+        # return ret

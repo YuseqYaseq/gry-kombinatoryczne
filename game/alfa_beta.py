@@ -4,13 +4,17 @@ max_value = 999888777666555
 
 class AlfaBeta:
 
-    def __init__(self, values, state, k, player, enemy):
+    def __init__(self, values, state, k, player, enemy, max_deepth = None):
         self.values = values
         self.state = state
         self.k = k
         self.player = player
         self.enemy = enemy
-        self.max_deepth = k
+
+        if max_deepth is None:
+            self.max_deepth = k
+        else:
+            self.max_deepth = max_deepth
 
     def get_move(self):
         alfa = float('-inf')
