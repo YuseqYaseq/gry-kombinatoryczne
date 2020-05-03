@@ -1,3 +1,5 @@
+from time import sleep
+
 import pygame
 import sys
 
@@ -50,3 +52,4 @@ class App:
             print("Player 1 won!")
         else:
             print("Player 2 won!")
+        sleep(10)

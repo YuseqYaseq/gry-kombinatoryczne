@@ -16,8 +16,3 @@ class Player:
         alfa_beta = AlfaBeta(values, nodes, self.k, self.player, self.enemy, self.max_deepth)
 
         return alfa_beta.get_move()
-    # def get_move(self, nodes: List):
-        # ret = randint(0, len(nodes)-1)
-        # while nodes[ret] != 0:
-        #     ret = randint(0, len(nodes)-1)
-        # return ret

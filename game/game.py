@@ -1,5 +1,6 @@
+from concurrent import futures
 import math
-
+from threading import Lock, Condition, Thread
 import pygame
 
 from game.player import Player
@@ -10,9 +11,11 @@ class Game:
     def __init__(self, screen, set_size, k):
 
         # Game stuff
-        self.player1 = Player(1, 2, k, 3)
-        self.player2 = Player(2, 1, k, 3)
+        self.player1 = Player(1, 2, k, 2)
+        self.player2 = Player(2, 1, k, 2)
         self.bot_move_wait_time = 1_000  # 1 second between every bot move
+        self.executor = futures.ThreadPoolExecutor()
+        self.future = None
         self.bot_timer = 0.0
         self.current_player_turn = 1  # 1 or 2
         self.p_nodes = [[], []]
@@ -121,29 +124,36 @@ class Game:
         # Bot move
         self.bot_timer += dt
         if self.bot_timer >= self.bot_move_wait_time:
-            if self.current_player_turn == 1:
-                move = self.player1.get_move(self.nodes_state)
+            if self.future is None:
+                if self.current_player_turn == 1:
+                    self.future = self.executor.submit(self.player1.get_move, self.nodes_state.copy())
+                else:
+                    self.future = self.executor.submit(self.player2.get_move, self.nodes_state.copy())
             else:
-                move = self.player2.get_move(self.nodes_state)
-            if self.nodes_state[move] != 0:
-                raise RuntimeError("Illegal move!")
-            self.nodes_state[move] = self.current_player_turn
-            self.p_nodes[self.current_player_turn - 1].append(move)
-            self.p_nodes[self.current_player_turn - 1].sort()
+                try:
+                    move = self.future.result(0.05)
+                except futures._base.TimeoutError:
+                    return
+                self.future = None
+                if self.nodes_state[move] != 0:
+                    raise RuntimeError("Illegal move!")
+                self.nodes_state[move] = self.current_player_turn
+                self.p_nodes[self.current_player_turn - 1].append(move)
+                self.p_nodes[self.current_player_turn - 1].sort()
 
-            # Check victory conditions
-            self.no_colored_nodes += 1
-            ap_len = self._find_longest_ap(self.p_nodes[self.current_player_turn - 1])
-            if ap_len > self.k:
-                self.finished = True
-                self.winner = self.current_player_turn
-                return
-            if self.no_colored_nodes == self.set_size:
-                self.finished = True
-                self.winner = 0  # Draw
+                # Check victory conditions
+                self.no_colored_nodes += 1
+                ap_len = self._find_longest_ap(self.p_nodes[self.current_player_turn - 1])
+                if ap_len > self.k:
+                    self.finished = True
+                    self.winner = self.current_player_turn
+                    return
+                if self.no_colored_nodes == self.set_size:
+                    self.finished = True
+                    self.winner = 0  # Draw
 
-            self.current_player_turn = (self.current_player_turn % 2) + 1
-            self.bot_timer -= self.bot_move_wait_time
+                self.current_player_turn = (self.current_player_turn % 2) + 1
+                self.bot_timer -= self.bot_move_wait_time
 
     def scroll_up(self, amount):
         self.first_node_y -= int(amount)
