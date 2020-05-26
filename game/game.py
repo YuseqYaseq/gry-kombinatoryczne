@@ -8,11 +8,11 @@ from game.player import Player
 
 class Game:
 
-    def __init__(self, screen, set_size, k):
+    def __init__(self, screen, set_size, k, d):
 
         # Game stuff
-        self.player1 = Player(1, 2, k, 2)
-        self.player2 = Player(2, 1, k, 2)
+        self.player1 = Player(1, 2, k, d)
+        self.player2 = Player(2, 1, k, d)
         self.bot_move_wait_time = 1_000  # 1 second between every bot move
         self.executor = futures.ThreadPoolExecutor()
         self.future = None
@@ -20,6 +20,7 @@ class Game:
         self.current_player_turn = 1  # 1 or 2
         self.p_nodes = [[], []]
         self.no_colored_nodes = 0
+        self.longest_ap = [0, 0]
 
         self.finished = False
         self.winner = 0  # 0 (draw) or 1 or 2
@@ -38,7 +39,8 @@ class Game:
         self.node_margin = 10
         self.node_outline_thickness = 5
 
-        self.font = pygame.font.Font(pygame.font.get_default_font(), 36)
+        self.font_big = pygame.font.Font(pygame.font.get_default_font(), 36)
+        self.font_small = pygame.font.Font(pygame.font.get_default_font(), 18)
         self.font_color = pygame.Color(0x000000FF)
 
         self.player1_color = pygame.Color('lightblue')
@@ -80,7 +82,9 @@ class Game:
                         self.player1_box2_x,
                         self.player1_box2_y,
                         self.player_box_width,
-                        self.player_box_height2)
+                        self.player_box_height2,
+                        "Longest sequence: " + str(self.longest_ap[0]),
+                        self.font_small)
 
         self._draw_rect(self.player2_color,
                         self.player2_box1_x,
@@ -93,7 +97,9 @@ class Game:
                         self.player2_box2_x,
                         self.player2_box2_y,
                         self.player_box_width,
-                        self.player_box_height2)
+                        self.player_box_height2,
+                        "Longest sequence: " + str(self.longest_ap[1]),
+                        self.font_small)
 
         if self.first_line_node_x is None:
             raise RuntimeError("You have to reset the game before calling draw()!")
@@ -121,6 +127,8 @@ class Game:
 
     def update(self, dt):
 
+        if self.finished:
+            return
         # Bot move
         self.bot_timer += dt
         if self.bot_timer >= self.bot_move_wait_time:
@@ -144,7 +152,8 @@ class Game:
                 # Check victory conditions
                 self.no_colored_nodes += 1
                 ap_len = self._find_longest_ap(self.p_nodes[self.current_player_turn - 1])
-                if ap_len > self.k:
+                self.longest_ap[self.current_player_turn - 1] = ap_len
+                if ap_len >= self.k:
                     self.finished = True
                     self.winner = self.current_player_turn
                     return
@@ -153,7 +162,8 @@ class Game:
                     self.winner = 0  # Draw
 
                 self.current_player_turn = (self.current_player_turn % 2) + 1
-                self.bot_timer -= self.bot_move_wait_time
+                #self.bot_timer -= self.bot_move_wait_time
+                self.bot_timer = 0
 
     def scroll_up(self, amount):
         self.first_node_y -= int(amount)
@@ -203,12 +213,14 @@ class Game:
         self.player2_box2_y = self.player1_box2_y
         self._calculate_nodes_positions()
 
-    def _draw_text(self, text, center_x, center_y):
-        text = self.font.render(text, True, self.font_color)
+    def _draw_text(self, text, center_x, center_y, font=None):
+        if font is None:
+            font = self.font_big
+        text = font.render(text, True, self.font_color)
         text_rect = text.get_rect(center=(center_x, center_y))
         self.screen.blit(text, text_rect)
 
-    def _draw_rect(self, player_color, x, y, w, h, text=None):
+    def _draw_rect(self, player_color, x, y, w, h, text=None, font=None):
         pygame.draw.rect(self.screen,
                          self.outline_color,
                          pygame.Rect((x, y), (w, h)),
@@ -219,9 +231,9 @@ class Game:
                          pygame.Rect((x, y), (w, h)))
 
         if text is not None:
-            self._draw_text(text, x + w//2, y+h//2)
+            self._draw_text(text, x + w//2, y+h//2, font)
 
-    def _draw_circle(self, color, x, y, r, text=None):
+    def _draw_circle(self, color, x, y, r, text=None, font=None):
 
         pygame.draw.circle(self.screen,
                            color,
@@ -235,7 +247,7 @@ class Game:
                            self.node_outline_thickness)
 
         if text is not None:
-            self._draw_text(text, x, y)
+            self._draw_text(text, x, y, font)
 
     @staticmethod
     def _find_longest_ap(element_list):
