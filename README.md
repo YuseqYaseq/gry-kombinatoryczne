@@ -9,8 +9,3 @@ Upewnij się, że folder projektu to working directory. Gdy nie pojawią się wy
 ```
 python test.py
 ```
-
-By uruchomić test gry:
-```
-python game_tests.py
-```
