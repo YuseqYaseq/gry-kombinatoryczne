@@ -1,3 +1,4 @@
+import random
 from concurrent import futures
 import math
 from threading import Lock, Condition, Thread
@@ -8,17 +9,20 @@ from game.player import Player
 
 class Game:
 
-    def __init__(self, screen, set_size, k, d):
+    def __init__(self, screen, set_size, k, min_v, max_v, d, bot_wait_time):
 
         # Game stuff
+        self.min_v = min_v
+        self.max_v = max_v
         self.player1 = Player(1, 2, k, d)
         self.player2 = Player(2, 1, k, d)
-        self.bot_move_wait_time = 1_000  # 1 second between every bot move
+        self.bot_move_wait_time = bot_wait_time
         self.executor = futures.ThreadPoolExecutor()
         self.future = None
         self.bot_timer = 0.0
         self.current_player_turn = 1  # 1 or 2
         self.p_nodes = [[], []]
+        self.nodes_values = []
         self.no_colored_nodes = 0
         self.longest_ap = [0, 0]
 
@@ -105,18 +109,18 @@ class Game:
             raise RuntimeError("You have to reset the game before calling draw()!")
 
         x, y = self.first_line_node_x, self.first_node_y
-        for i in range(1, self.set_size+1):
+        for i in range(self.set_size):
 
-            if self.nodes_state[i - 1] == 0:
+            if self.nodes_state[i] == 0:
                 node_color = self.empty_node_color
-            elif self.nodes_state[i - 1] == 1:
+            elif self.nodes_state[i] == 1:
                 node_color = self.player1_color
             else:
                 node_color = self.player2_color
 
-            self._draw_circle(node_color, x + self.node_radius, y, self.node_radius, str(i))
+            self._draw_circle(node_color, x + self.node_radius, y, self.node_radius, str(self.nodes_values[i]))
 
-            if i % self.nodes_in_line == 0:
+            if (i+1) % self.nodes_in_line == 0:
                 y += 2 * self.node_radius + self.node_margin
                 if self.set_size - i < self.nodes_in_line:
                     x = self.last_line_node_x
@@ -134,9 +138,9 @@ class Game:
         if self.bot_timer >= self.bot_move_wait_time:
             if self.future is None:
                 if self.current_player_turn == 1:
-                    self.future = self.executor.submit(self.player1.get_move, self.nodes_state.copy())
+                    self.future = self.executor.submit(self.player1.get_move, self.nodes_state.copy(), self.nodes_values.copy())
                 else:
-                    self.future = self.executor.submit(self.player2.get_move, self.nodes_state.copy())
+                    self.future = self.executor.submit(self.player2.get_move, self.nodes_state.copy(), self.nodes_values.copy())
             else:
                 try:
                     move = self.future.result(0.05)
@@ -151,7 +155,7 @@ class Game:
 
                 # Check victory conditions
                 self.no_colored_nodes += 1
-                ap_len = self._find_longest_ap(self.p_nodes[self.current_player_turn - 1])
+                ap_len = self._find_longest_ap([self.nodes_values[i] for i in self.p_nodes[self.current_player_turn - 1]])
                 self.longest_ap[self.current_player_turn - 1] = ap_len
                 if ap_len >= self.k:
                     self.finished = True
@@ -177,9 +181,19 @@ class Game:
 
     def reset(self, set_size, k):
         self.finished = False
+        self.winner = 0
         self.set_size = set_size
         self.nodes_state = [0 for _ in range(self.set_size)]
+        self.nodes_values = [random.randrange(self.min_v, self.max_v) for _ in range(self.set_size)]
+        self.nodes_values.sort()
         self.k = k
+        self.future = None
+        self.bot_timer = 0.0
+        self.current_player_turn = 1  # 1 or 2
+        self.p_nodes = [[], []]
+        self.no_colored_nodes = 0
+        self.longest_ap = [0, 0]
+
         self._calculate_nodes_positions()
 
     def _calculate_nodes_positions(self):

@@ -8,23 +8,20 @@ from game.game import Game
 
 class App:
 
-    def __init__(self, N, k, d):
+    def __init__(self, N, k, min_v, max_v, d, bot_wait_time):
         pygame.init()
 
-        # Game stats
         self.set_size = N
         self.k = k
-        self.d = d
 
         self.fps = 60
-        self.time_before_restart = 10_000  # 10s
         self.window_width = 1200
         self.window_height = 800
         self.scroll_speed = 2
         self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.RESIZABLE)
-        self.game = Game(self.screen, self.set_size, self.k, self.d)
+        self.game = Game(self.screen, N, k, min_v, max_v, d, bot_wait_time)
 
-    def run(self):
+    def run(self, time_before_restart):
         self.game.reset(self.set_size, self.k)
         clock = pygame.time.Clock()
 
@@ -51,11 +48,6 @@ class App:
 
             if self.game.finished:
                 restart_timer += ms_elapsed
-            if restart_timer >= self.time_before_restart:
-                if self.game.winner == 0:
-                    print("Draw!")
-                elif self.game.winner == 1:
-                    print("Player 1 won!")
-                else:
-                    print("Player 2 won!")
-                break
+            if restart_timer > time_before_restart:
+                no_moves = len(self.game.p_nodes[0]) + len(self.game.p_nodes[1])
+                return self.game.winner, no_moves

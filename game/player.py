@@ -10,8 +10,7 @@ class Player:
         self.k = k
         self.max_deepth = max_deepth
         
-    def get_move(self, nodes: List):
-        values = list(range(0, len(nodes))) #TODO
+    def get_move(self, nodes: List, values: List):
 
         alfa_beta = AlfaBeta(values, nodes, self.k, self.player, self.enemy, self.max_deepth)
 
