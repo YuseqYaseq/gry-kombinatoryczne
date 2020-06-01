@@ -35,7 +35,7 @@ def main():
         p1_wins = 0
         p2_wins = 0
         no_moves = []
-        no_games = 10
+        no_games = 100
         for i in range(no_games):
             print(f'\rLaunch game {i+1}/{no_games}', end='')
             winner, no_m = app.run(0)
