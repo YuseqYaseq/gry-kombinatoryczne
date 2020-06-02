@@ -14,8 +14,7 @@ D - parametr decydujący o głębokości na jaką wejdzie komputer przy wyznacza
 b - parametr ustalający czas, który ma upłynąć między poszczególnymi ruchami graczy w sekundach; domyślnie 1.  
 --launch-test - flaga określająca, czy należy uruchomić testy strategii. Wówczas odpalone zostanie 100 gier z podanymi parametrami, a po zakończeniu zostanie zwrócona liczba zwycięstw każdego gracza i średnia liczba ruchów w grze. Uwaga: ustawia parametr b na 0.  
 
-Upewnij się, że folder projektu to working directory. Gdy nie pojawią się wyjątki, wszystkie testy przeszły pomyślnie. By uruchomić testy jednostkowe:
-
+By uruchomić testy jednostkowe:
 ```
 python test.py
 ```
